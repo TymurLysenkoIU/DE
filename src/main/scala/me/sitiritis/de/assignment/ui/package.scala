@@ -3,25 +3,34 @@ package me.sitiritis.de.assignment
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import org.scalajs.dom.html.Element
+import plotly.{Plotly, Trace}
 
 // TODO: Validation, button
 package object ui {
+  def plotSolution(data: Seq[Trace]): Unit = Plotly.plot("solutionPlot", data)
+  def plotSolution(data: Trace): Unit = Plotly.plot("solutionPlot", data)
+  def plotError(data: Seq[Trace]): Unit = Plotly.plot("errorPlot", data)
+
   @dom def ivpInputForm(
     initialX: Var[Double],
     initialY: Var[Double],
-    beginX: Var[Double],
+    beginX: Binding[Double],
     endX: Var[Double],
+    numberOfIntervals: Var[Int]
   ): Binding[Element] = {
     <div class="input-form">
       <p>
         y({ Inputs.doubleInlineInput(initialX, "initialXInput").bind }) =
-        { Inputs.doubleInlineInput(initialY, "initialXInput").bind }
+        { Inputs.doubleInlineInput(initialY, "initialYInput").bind }
       </p>
       <p>
         x belongs to [
-          { Inputs.doubleInlineInput(beginX, "beginXInput").bind };
+          { beginX.bind.toString };
           { Inputs.doubleInlineInput(endX, "endXInput").bind }
-        ]
+        ];
+      </p>
+      <p>
+        Number of intervals { Inputs.intInlineInput(numberOfIntervals, "numberOfIntervalsInput").bind }
       </p>
     </div>
   }
@@ -29,12 +38,14 @@ package object ui {
   @dom def ivpPart(
     initialX: Var[Double],
     initialY: Var[Double],
-    beginX: Var[Double],
+    beginX: Binding[Double],
     endX: Var[Double],
+    numberOfIntervals: Var[Int]
   ): Binding[Element] = {
     <div class="container-item">
-      { ivpInputForm(initialX, initialY, beginX, endX).bind }
-      <div id="solutionPlot"></div>
+      <div>{ ivpInputForm(initialX, initialY, beginX, endX, numberOfIntervals).bind }</div>
+      <div>{ Buttons.redrawSolutionButton().bind }</div>
+      <div class="plot" id="solutionPlot"></div>
     </div>
   }
 
@@ -58,21 +69,22 @@ package object ui {
     endErrorInterval: Var[Int]
   ): Binding[Element] = {
     <div class="container-item">
-      { errorInputForm(beginErrorInterval, endErrorInterval).bind }
-      <div id="errorPlot"></div>
+      <div>{ errorInputForm(beginErrorInterval, endErrorInterval).bind }</div>
+      <div>{ Buttons.redrawErrorButton().bind }</div>
+      <div class="plot" id="errorPlot"></div>
     </div>
   }
 
   @dom def mainContainer(
     initialX: Var[Double],
     initialY: Var[Double],
-    beginX: Var[Double],
     endX: Var[Double],
+    numberOfIntervals: Var[Int],
     beginErrorInterval: Var[Int],
     endErrorInterval: Var[Int]
   ): Binding[Element] = {
     <div class="container">
-      { ivpPart(initialX, initialY, beginX, endX).bind }
+      { ivpPart(initialX, initialY, initialX, endX, numberOfIntervals).bind }
       { errorPart(beginErrorInterval, endErrorInterval).bind }
     </div>
   }

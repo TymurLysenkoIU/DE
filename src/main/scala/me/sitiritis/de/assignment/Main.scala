@@ -5,6 +5,7 @@ import com.thoughtworks.binding.dom
 import io.udash.wrappers.jquery._
 import org.scalajs.dom.document
 import plotly._
+import me.sitiritis.de.assignment.de_numerical_methods.{EulerMethod, deFunction}
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -21,10 +22,10 @@ object Main {
     val data = Seq(trace1, trace2)
 
     val initialX: Var[Double] = Var(0.0)
-    val beginX: Var[Double] = Var(0.0)
-    val endX: Var[Double] = Var(10.0)
+    val endX: Var[Double] = Var(20.0)
     val initialY: Var[Double] = Var(1.0)
-    val beginErrorInterval: Var[Int] = Var(0)
+    val numberOfIntervals: Var[Int] = Var(200)
+    val beginErrorInterval: Var[Int] = Var(1)
     val endErrorInterval: Var[Int] = Var(100)
 
     jQ(() => {
@@ -32,15 +33,20 @@ object Main {
         document.getElementById("mainContainer"),
         ui.mainContainer(
           initialX,
-          beginX,
-          endX,
           initialY,
+          endX,
+          numberOfIntervals,
           beginErrorInterval,
           endErrorInterval
         )
       )
-      Plotly.plot("solutionPlot", data)
-      Plotly.plot("errorPlot", data)
+
+      EulerMethod(initialX.value, endX.value, initialY.value, 200) { deFunction } foreach { r =>
+        println(r)
+        val (xs, ys) = r
+        ui.plotSolution(Seq(Scatter(xs, ys)))
+      }
+      ui.plotError(data)
     })
   }
 }
