@@ -17,13 +17,16 @@ val udashLibs = Seq(
 )
 libraryDependencies ++= udashLibs map { lib => "io.udash" %%% s"udash-${lib.name}" % lib.version }
 // Binding.scala
-libraryDependencies += "com.thoughtworks.binding" %%% "dom" % "latest.release"
+libraryDependencies += "com.thoughtworks.binding" %%% "dom" % "11.8.1+36-f6ab2503"
 // Plotly
 libraryDependencies += "org.plotly-scala" %%% "plotly-render" % "0.5.2"
+// CSS
+libraryDependencies += "com.github.japgolly.scalacss" %%% "core" % "0.5.3"
 
 
 // JS dependencies
 skip in packageJSDependencies := false
 // Jquery
-jsDependencies += "org.webjars" % "jquery" % "3.3.1" / "3.3.1/jquery.js" minified "3.3.1/jquery.min.js"
-jsDependencies += ("org.webjars.bower" % "plotly.js" % "1.50.1" / "plotly.min.js").commonJSName("Plotly")
+jsDependencies += ("org.webjars" % "jquery" % "3.3.1" / "3.3.1/jquery.js" minified "3.3.1/jquery.min.js").commonJSName("jquery")
+// Plotly
+jsDependencies += ("org.webjars.bower" % "plotly.js" % "1.41.3" / "plotly.min.js").commonJSName("Plotly")

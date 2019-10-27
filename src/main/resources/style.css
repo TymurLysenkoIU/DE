@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.container-item {
+  flex-grow: 1;
+  max-width: 50%;
+
+  padding: 10px;
+}
+
+@media (max-width: 1250px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .container-item {
+    max-width: 100%;
+  }
+}
+
+.container-item #solutionContainer {
+  order: 0;
+}
+
+.container-item #errorContainer {
+  order: 1;
+}
+
+.input-form {
+  margin: 10px 0px;
+  text-align: center;
+}
+
+input {
+  margin: 0px 3px;
+}
