@@ -7,9 +7,13 @@ import plotly.{Plotly, Trace}
 
 // TODO: Validation, button
 package object ui {
-  def plotSolution(data: Seq[Trace]): Unit = Plotly.plot("solutionPlot", data)
-  def plotSolution(data: Trace): Unit = Plotly.plot("solutionPlot", data)
-  def plotError(data: Seq[Trace]): Unit = Plotly.plot("errorPlot", data)
+  val solutionDivID = "solutionPlot"
+  val errorDivID = "errorPlot"
+  def plotSolution(data: Seq[Trace]): Unit = Plotly.plot(solutionDivID, data)
+  def plotSolution(data: Trace): Unit = Plotly.plot(solutionDivID, data)
+  def purgeSolution(): Unit = plotly_ext.Plotly.purge(solutionDivID)
+  def plotError(data: Seq[Trace]): Unit = Plotly.plot(errorDivID, data)
+  def purgeError(): Unit = plotly_ext.Plotly.purge(errorDivID)
 
   @dom def ivpInputForm(
     initialX: Var[Double],
@@ -31,6 +35,7 @@ package object ui {
       </p>
       <p>
         Number of intervals { Inputs.intInlineInput(numberOfIntervals, "numberOfIntervalsInput").bind }
+        (step = { ((endX.bind - beginX.bind) / numberOfIntervals.bind).toString })
       </p>
     </div>
   }

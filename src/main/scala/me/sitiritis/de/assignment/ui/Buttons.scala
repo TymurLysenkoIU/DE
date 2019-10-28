@@ -2,32 +2,33 @@ package me.sitiritis.de.assignment.ui
 
 import com.thoughtworks.binding.{Binding, dom}
 import io.udash.wrappers.jquery.jQ
-import me.sitiritis.de.assignment.de_numerical_methods.{EulerMethod, deFunction}
-import org.scalajs.dom.raw.Event
+import me.sitiritis.de.assignment.de_numerical_methods.EulerMethodForTask
 import org.scalajs.dom.html.Element
+import org.scalajs.dom.raw.Event
 import plotly.Scatter
 
 object Buttons {
   private def redrawSolution(): Unit = {
-    jQ("#solutionPlot").empty()
-//    plotly.Plotly.purge
+    purgeSolution()
 
-    EulerMethod(
-      jQ("#initialXInput").value.asInstanceOf[String].toDouble,
-      jQ("#endXInput").value.asInstanceOf[String].toDouble,
-      jQ("#initialYInput").value.asInstanceOf[String].toDouble,
-      jQ("#numberOfIntervalsInput").value.asInstanceOf[String].toInt
-    ) { deFunction } foreach { r =>
-      println(r)
-      val (xs, ys) = r
-      plotSolution(Scatter(xs, ys))
+    val ix = jQ("#initialXInput").value.asInstanceOf[String].toDouble
+    val fx = jQ("#endXInput").value.asInstanceOf[String].toDouble
+    val iy = jQ("#initialYInput").value.asInstanceOf[String].toDouble
+    val ni = jQ("#numberOfIntervalsInput").value.asInstanceOf[String].toInt
+
+    val xs = Range.BigDecimal.inclusive(ix, fx, (fx - ix) / ni)
+
+    EulerMethodForTask(xs, iy) foreach { ys =>
+      val xl = xs.toList map { _.toDouble }
+      println((xl, ys))
+      plotSolution(Seq(Scatter(xl, ys)))
     }
     // TODO: call numerical methods
   }
 
   private def redrawError(): Unit = {
-    jQ("#errorPlot").empty()
     // TODO: call numerical methods
+    purgeError()
   }
 
   // TODO: inject validation
@@ -36,7 +37,7 @@ object Buttons {
       onclick={ _: Event =>
         redrawSolution()
         redrawError()
-      }>
+    }>
       Solve the initial value problem
     </button>
   }

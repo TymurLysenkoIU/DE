@@ -3,9 +3,9 @@ package me.sitiritis.de.assignment
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.dom
 import io.udash.wrappers.jquery._
+import me.sitiritis.de.assignment.de_numerical_methods.{EulerMethod, EulerMethodForTask}
 import org.scalajs.dom.document
 import plotly._
-import me.sitiritis.de.assignment.de_numerical_methods.{EulerMethod, deFunction}
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -41,10 +41,12 @@ object Main {
         )
       )
 
-      EulerMethod(initialX.value, endX.value, initialY.value, 200) { deFunction } foreach { r =>
-        println(r)
-        val (xs, ys) = r
-        ui.plotSolution(Seq(Scatter(xs, ys)))
+      val xs = Range.BigDecimal.inclusive(initialX.value, endX.value, (endX.value - initialX.value) / numberOfIntervals.value)
+
+      EulerMethodForTask(xs, initialY.value) foreach { ys =>
+        val xl = xs.toList map { _.toDouble }
+        println((xl, ys))
+        ui.plotSolution(Seq(Scatter(xl, ys)))
       }
       ui.plotError(data)
     })

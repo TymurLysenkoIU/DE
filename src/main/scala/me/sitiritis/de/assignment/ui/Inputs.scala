@@ -35,7 +35,7 @@ object Inputs {
         self.width(calculateInputWidth(self.value.asInstanceOf[String].length))
       }
       onchange={ _: Event =>
-        jQ(s"#$inputID").attr("value") map { v => rv.value = v.toInt }
+        rv.value = jQ(s"#$inputID").value.asInstanceOf[String].toInt
       }
     />
   }
