@@ -1,47 +1,92 @@
-.container {
+.mainContainer {
   display: flex;
   justify-content: space-between;
   flex-direction: row;
   align-items: stretch;
+  flex-wrap: wrap;
 }
 
-.container-item {
-  flex-grow: 1;
-  max-width: 50%;
+.inputForm {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: stretch;
+  flex-wrap: wrap;
+  width: 100%;
 
-  text-align: center;
-  padding: 10px;
-}
-
-@media (max-width: 1250px) {
-  .container {
-    flex-direction: column;
-  }
-
-  .container-item {
-    max-width: 100%;
-  }
-}
-
-.container-item #solutionContainer {
   order: 0;
 }
 
-.container-item #errorContainer {
+.formPart {
+  text-align: center;
+  flex-grow: 1;
+  max-width: 50%;
+
+  padding: 10px;
+}
+
+#ivpInputForm {
+  order: 0;
+}
+
+#errorInputForm {
   order: 1;
 }
 
-.plot {
-  margin-top: 10px;
+#mainPlot {
+  width: 100%;
+  order: 1;
 }
 
-.input-form {
-  margin: 10px 0px;
+#errorPlots {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: stretch;
+  flex-wrap: wrap;
+  width: 100%;
+
+  order: 2;
+}
+
+#localErrorPlot {
+  width: 50%;
+
+  order: 0;
+}
+
+#maxLocalErrorPlot {
+  width: 50%;
+
+  order: 1;
+}
+
+@media (max-width: 1250px) {
+  .inputForm {
+    flex-direction: column;
+  }
+
+  .formPart {
+    max-width: 100%;
+  }
+
+  .mainContainer {
+    flex-direction: column;
+  }
+
+  #errorPlots {
+    flex-direction: column;
+  }
+
+  #localErrorPlot {
+    width: 100%;
+  }
+
+  #maxLocalErrorPlot {
+    width: 100%;
+  }
 }
 
 input {
-  margin: 0px 3px;
   width: 24px;
 }
-
-/* TODO: add style for errors */
