@@ -3,9 +3,7 @@ package me.sitiritis.de.assignment
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import io.udash.wrappers.jquery._
-import me.sitiritis.de.assignment.de_numerical_methods.{EulerMethodForTask, ImprovedEulerMethodForTask, RungeKuttaMethodForTask}
 import org.scalajs.dom.document
-import plotly._
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -23,7 +21,7 @@ object Main {
       )
 
       val redraw = Binding {
-        ui.redrawPlots(ui.getDataForPlots(initialX.bind, finalX.bind, initialY.bind, numberOfIntervals.bind))
+        ui.Plotting.redrawPlots(ui.Plotting.getDataForPlots(initialX.bind, finalX.bind, initialY.bind, numberOfIntervals.bind))
       }
 
       redraw.watch()

@@ -1,6 +1,7 @@
 package me.sitiritis.de.assignment
 
 import scala.collection.immutable.NumericRange
+import me.sitiritis.de.assignment.de_numerical_methods.MathUtils.~=
 
 package object de_numerical_methods {
   trait DENumericalMethod {
@@ -10,17 +11,18 @@ package object de_numerical_methods {
 
   case class EulerMethod(
     f: (BigDecimal, BigDecimal) => Option[BigDecimal],
-    e: BigDecimal => Option[BigDecimal]
+    e: (BigDecimal, BigDecimal) => Option[BigDecimal],
+    c: (BigDecimal, BigDecimal) => Option[BigDecimal]
   ) extends DENumericalMethod {
     override def solve(xs: NumericRange.Inclusive[BigDecimal], initialY: BigDecimal): Option[DENumericalSolution] = {
       def eulerMethodForValidData(r: NumericRange.Inclusive[BigDecimal], iy: BigDecimal) = {
         r.take(r.size - 1).foldLeft[Option[(List[BigDecimal], List[BigDecimal])]](Some((List(initialY), List(0.0)))) {
           (prev, x) =>
             val nextX = x + r.step
-
             for {
               p <- prev
-              exc <- e(nextX)
+              const <- c(xs.head, iy)
+              exc <- e(nextX, const)
               fp <- f(x, p._1.head)
             } yield {
               val curY = p._1.head + (fp * r.step)
@@ -34,11 +36,12 @@ package object de_numerical_methods {
     }
   }
 
-  object EulerMethodForTask extends EulerMethod(deFunction, exactSolutionFunction)
+  class EulerMethodForTask extends EulerMethod(deFunction, exactSolutionFunction, exactSolutionConstant)
 
   case class ImprovedEulerMethod(
     f: (BigDecimal, BigDecimal) => Option[BigDecimal],
-    e: BigDecimal => Option[BigDecimal]
+    e: (BigDecimal, BigDecimal) => Option[BigDecimal],
+    c: (BigDecimal, BigDecimal) => Option[BigDecimal]
   ) extends DENumericalMethod {
     override def solve(xs: NumericRange.Inclusive[BigDecimal], initialY: BigDecimal): Option[DENumericalSolution] = {
       def improvedEulerMethodForValidData(r: NumericRange.Inclusive[BigDecimal], iy: BigDecimal) = {
@@ -47,7 +50,8 @@ package object de_numerical_methods {
             val nextX = x + r.step
             for {
               p <- prev
-              exc <- e(nextX)
+              const <- c(xs.head, iy)
+              exc <- e(nextX, const)
               k1 <- f(x, p._1.head)
               k2 <- f(x + r.step, p._1.head + (r.step * k1))
             } yield {
@@ -62,11 +66,12 @@ package object de_numerical_methods {
     }
   }
 
-  object ImprovedEulerMethodForTask extends ImprovedEulerMethod(deFunction, exactSolutionFunction)
+  class ImprovedEulerMethodForTask extends ImprovedEulerMethod(deFunction, exactSolutionFunction, exactSolutionConstant)
 
   case class RungeKuttaMethod(
     f: (BigDecimal, BigDecimal) => Option[BigDecimal],
-    e: BigDecimal => Option[BigDecimal]
+    e: (BigDecimal, BigDecimal) => Option[BigDecimal],
+    c: (BigDecimal, BigDecimal) => Option[BigDecimal]
   ) extends DENumericalMethod {
     override def solve(xs: NumericRange.Inclusive[BigDecimal], initialY: BigDecimal): Option[DENumericalSolution] = {
       def improvedEulerMethodForValidData(r: NumericRange.Inclusive[BigDecimal], iy: BigDecimal) = {
@@ -75,7 +80,8 @@ package object de_numerical_methods {
             val nextX = x + r.step
             for {
               p <- prev
-              exc <- e(nextX)
+              const <- c(xs.head, iy)
+              exc <- e(nextX, const)
               k1 <- f(x, p._1.head)
               k2 <- f(x + (r.step / 2.0), p._1.head + ((r.step / 2.0) * k1))
               k3 <- f(x + (r.step / 2.0), p._1.head + ((r.step / 2.0) * k2))
@@ -92,12 +98,26 @@ package object de_numerical_methods {
     }
   }
 
-  object RungeKuttaMethodForTask extends RungeKuttaMethod(deFunction, exactSolutionFunction)
+  class RungeKuttaMethodForTask extends RungeKuttaMethod(deFunction, exactSolutionFunction, exactSolutionConstant)
 
   def calculateStep(ix: BigDecimal, fx: BigDecimal, n: Int): BigDecimal = (fx - ix) / n
 
   def deFunction(x: BigDecimal, y: BigDecimal): Option[BigDecimal] = Some(5 - x.pow(2) - y.pow(2) + 2 * x * y)
 
-  def exactSolutionFunction(x: Double): Double = 2.0 + x - (4.0 / ((3 * Math.pow(Math.E, 4.0 * x)) + 1.0))
-  def exactSolutionFunction(x: BigDecimal): Option[BigDecimal] = Some(exactSolutionFunction(x.toDouble))
+  def exactSolutionConstant(ix: Double, iy: Double): Option[Double] = {
+    if (~=(iy, ix + 2.0)) None else Some((4.0 + iy - 2.0 - ix) / (Math.exp(4.0 * ix) * (iy - 2.0 - ix)))
+  }
+
+  def exactSolutionFunction(x: Double, c: Double): Option[Double] = {
+    if (~=(Math.exp(4.0 * x) * c, 1.0))
+      None
+    else
+      Some(2.0 + x + (4.0 / ((c * Math.pow(Math.E, 4.0 * x)) - 1.0)))
+  }
+
+  def exactSolutionConstant(ix: BigDecimal, iy: BigDecimal): Option[BigDecimal] =
+    exactSolutionConstant(ix.toDouble, iy.toDouble) map { BigDecimal(_) }
+
+  def exactSolutionFunction(x: BigDecimal, c: BigDecimal): Option[BigDecimal] =
+    exactSolutionFunction(x.toDouble, c.toDouble) map { BigDecimal(_) }
 }

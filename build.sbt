@@ -5,6 +5,7 @@ name := "de-assignment"
 organization := "me.sitiritis"
 version := "0.1.0-SNAPSHOT"
 scalaVersion := "2.12.8"
+scalacOptions += "-Ypartial-unification"
 
 scalaJSUseMainModuleInitializer := true
 jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv()
@@ -22,6 +23,8 @@ libraryDependencies += "com.thoughtworks.binding" %%% "dom" % "11.8.1+36-f6ab250
 libraryDependencies += "org.plotly-scala" %%% "plotly-render" % "0.5.2"
 // CSS
 libraryDependencies += "com.github.japgolly.scalacss" %%% "core" % "0.5.3"
+// Cats
+libraryDependencies += "org.typelevel" %%% "cats-core" % "2.0.0"
 
 
 // JS dependencies

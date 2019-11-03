@@ -90,3 +90,8 @@
 input {
   width: 24px;
 }
+
+header {
+  text-align: center;
+  width: 100%
+}
