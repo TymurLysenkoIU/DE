@@ -3,7 +3,8 @@ package me.sitiritis.de.assignment
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import io.udash.wrappers.jquery._
-import me.sitiritis.de.assignment.de_numerical_methods.calculateStep
+import de_numerical_methods.calculateStep
+import me.sitiritis.de.assignment
 import org.scalajs.dom.document
 
 object Main {
@@ -29,11 +30,11 @@ object Main {
 
       // Redraw plot every time IVP changes
       Binding {
-        ui.Plotting.redrawSolutionErrorPlots(ui.Plotting.getSolutionErrorDataForPlots(xs.bind, initialY.bind), Nil)
+        Plotting.redrawSolutionErrorPlots(assignment.Plotting.getSolutionErrorDataForPlots(xs.bind, initialY.bind), Nil)
       }.watch()
 
-      ui.Plotting.redrawMaxLocalError(
-        ui.Plotting.getMaxLocalErrorDataForPlot(
+      assignment.Plotting.redrawMaxLocalError(
+        assignment.Plotting.getMaxLocalErrorDataForPlot(
           initialX.value,
           finalX.value,
           initialY.value,

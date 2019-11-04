@@ -1,0 +1,4 @@
+package me.sitiritis.de.assignment
+
+object ImprovedEulerMethodForTaskObject extends ImprovedEulerMethodForTask
+

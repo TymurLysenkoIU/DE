@@ -1,10 +1,10 @@
-package me.sitiritis.de.assignment.ui
+package me.sitiritis.de.assignment
 
-import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
+import com.thoughtworks.binding.Binding.Var
 import io.udash.wrappers.jquery.jQ
+import org.scalajs.dom.Event
 import org.scalajs.dom.html.Element
-import org.scalajs.dom.raw.Event
 
 object Inputs {
   private def calculateInputWidth(contentLen: Int): Int = {

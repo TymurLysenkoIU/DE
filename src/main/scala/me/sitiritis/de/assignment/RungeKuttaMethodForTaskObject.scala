@@ -1,0 +1,3 @@
+package me.sitiritis.de.assignment
+
+object RungeKuttaMethodForTaskObject extends RungeKuttaMethodForTask

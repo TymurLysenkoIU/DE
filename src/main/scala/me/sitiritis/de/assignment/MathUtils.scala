@@ -1,4 +1,4 @@
-package me.sitiritis.de.assignment.de_numerical_methods
+package me.sitiritis.de.assignment
 
 object MathUtils {
   def ~=(a: Double, b: Double, precision: Double): Boolean = (a - b).abs < precision

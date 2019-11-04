@@ -1,4 +1,4 @@
-package me.sitiritis.de.assignment.de_numerical_methods
+package me.sitiritis.de.assignment
 
 import scala.collection.immutable.NumericRange
 

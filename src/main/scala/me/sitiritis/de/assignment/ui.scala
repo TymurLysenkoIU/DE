@@ -2,9 +2,10 @@ package me.sitiritis.de.assignment
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
+import me.sitiritis.de.assignment.de_numerical_methods.calculateStep
 import org.scalajs.dom.html.Element
 
-package object ui {
+object ui {
   @dom def ivpInputForm(
     initialX: Var[Double],
     finalX: Var[Double],
@@ -25,7 +26,7 @@ package object ui {
       <p>
         Number of intervals { Inputs.intInlineInput(numberOfIntervals, "numberOfIntervalsInput").bind }
         (step = {
-          de_numerical_methods.calculateStep(
+          calculateStep(
             initialX.bind,
             finalX.bind,
             numberOfIntervals.bind
