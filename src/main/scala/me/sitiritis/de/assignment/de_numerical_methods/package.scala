@@ -26,8 +26,7 @@ package object de_numerical_methods {
               fp <- f(x, p._1.head)
             } yield {
               val curY = p._1.head + (fp * r.step)
-              val curDiff = (curY - exc).abs
-              val curLocalError = curDiff - p._2.head
+              val curLocalError = curY - exc
               (curY :: p._1, curLocalError :: p._2)
             }
         } map { res => DENumericalSolution(r, res._1.reverse, res._2.reverse) }
@@ -37,6 +36,7 @@ package object de_numerical_methods {
   }
 
   class EulerMethodForTask extends EulerMethod(deFunction, exactSolutionFunction, exactSolutionConstant)
+  object EulerMethodForTask extends EulerMethodForTask
 
   case class ImprovedEulerMethod(
     f: (BigDecimal, BigDecimal) => Option[BigDecimal],
@@ -56,8 +56,7 @@ package object de_numerical_methods {
               k2 <- f(x + r.step, p._1.head + (r.step * k1))
             } yield {
               val curY = p._1.head + (r.step / 2.0) * (k1 + k2)
-              val curDiff = (curY - exc).abs
-              val curLocalError = curDiff - p._2.head
+              val curLocalError = curY - exc
               (curY :: p._1, curLocalError :: p._2)
             }
         } map { res => DENumericalSolution(r, res._1.reverse, res._2.reverse) }
@@ -67,6 +66,7 @@ package object de_numerical_methods {
   }
 
   class ImprovedEulerMethodForTask extends ImprovedEulerMethod(deFunction, exactSolutionFunction, exactSolutionConstant)
+  object ImprovedEulerMethodForTask extends ImprovedEulerMethodForTask
 
   case class RungeKuttaMethod(
     f: (BigDecimal, BigDecimal) => Option[BigDecimal],
@@ -88,8 +88,7 @@ package object de_numerical_methods {
               k4 <- f(x + r.step, p._1.head + (r.step * k3))
             } yield {
               val curY = p._1.head + ((r.step / 6.0) * (k1 + (2.0 * k2) + (2.0 * k3) + k4))
-              val curDiff = (curY - exc).abs
-              val curLocalError = curDiff - p._2.head
+              val curLocalError = curY - exc
               (curY :: p._1, curLocalError :: p._2)
             }
         } map { res => DENumericalSolution(r, res._1.reverse, res._2.reverse) }
@@ -99,6 +98,7 @@ package object de_numerical_methods {
   }
 
   class RungeKuttaMethodForTask extends RungeKuttaMethod(deFunction, exactSolutionFunction, exactSolutionConstant)
+  object RungeKuttaMethodForTask extends RungeKuttaMethodForTask
 
   def calculateStep(ix: BigDecimal, fx: BigDecimal, n: Int): BigDecimal = (fx - ix) / n
 
@@ -109,10 +109,7 @@ package object de_numerical_methods {
   }
 
   def exactSolutionFunction(x: Double, c: Double): Option[Double] = {
-    if (~=(Math.exp(4.0 * x) * c, 1.0))
-      None
-    else
-      Some(2.0 + x + (4.0 / ((c * Math.pow(Math.E, 4.0 * x)) - 1.0)))
+    if (~=(Math.exp(4.0 * x) * c, 1.0)) None else Some(2.0 + x + (4.0 / ((c * Math.pow(Math.E, 4.0 * x)) - 1.0)))
   }
 
   def exactSolutionConstant(ix: BigDecimal, iy: BigDecimal): Option[BigDecimal] =

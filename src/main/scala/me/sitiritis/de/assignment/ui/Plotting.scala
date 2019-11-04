@@ -4,8 +4,12 @@ import me.sitiritis.de.assignment.de_numerical_methods._
 import me.sitiritis.de.assignment.plotly_ext
 import plotly.element._
 import plotly.{Plotly, Scatter, Trace}
+
 import scala.collection.immutable.NumericRange
 import cats.implicits._
+import me.sitiritis.de.assignment.ui.Plotting.PlottableEulerMethodForTask.plotColor
+
+import scala.language.postfixOps
 
 object Plotting {
   case class DataForSolutionErrorPlot(solutionPlot: Scatter, errorPlot: Scatter)
@@ -215,21 +219,96 @@ object Plotting {
   def plotMaxLocalError(data: Seq[Trace]): Unit = Plotly.plot(maxLocalErrorDivID, data)
   def purgeMaxLocalError(): Unit = plotly_ext.Plotly.purge(maxLocalErrorDivID)
 
-  def getDataForPlots(ix: Double, fx: Double, iy:Double, ni: Int): List[DataForSolutionErrorPlot] = {
-    val xs = Range.BigDecimal.inclusive(
-      ix,
-      fx,
-      calculateStep(ix, fx, ni)
+  def getSolutionErrorDataForPlots(xs: NumericRange.Inclusive[BigDecimal], iy:Double): List[DataForSolutionErrorPlot] = {
+    (PlottableEulerMethodForTask.plotData(xs, iy) map { List(_) } getOrElse Nil) :::
+    (PlottableImprovedEulerMethodForTask.plotData(xs, iy) map { List(_) } getOrElse Nil) :::
+    (PlottableRungeKuttaMethodForTask.plotData(xs, iy) map { List(_) } getOrElse Nil) :::
+    (PlottableExactSolution.plotData(xs, iy) map { List(_) } getOrElse Nil) :::
+    Nil
+  }
+
+  def getMaxLocalErrorDataForPlot(ix: Double, fx: Double, iy:Double, in: Int, fn: Int): List[Scatter] = {
+    implicit object AbsoluteBigDecimalOrder extends cats.kernel.Order[BigDecimal] {
+      override def compare(x: BigDecimal, y: BigDecimal): Int = x.abs.compareTo(y.abs)
+    }
+
+    val ns = Range.Int.inclusive(in, fn, 1)
+
+    val (eys, ieys, rkys) = ns map { n =>
+      val xs = Range.BigDecimal.inclusive(
+        ix,
+        fx,
+        calculateStep(ix, fx, n)
+      )
+
+      (
+        EulerMethodForTask(xs, iy) flatMap { _.le.maximumOption(AbsoluteBigDecimalOrder) map { _.toString } } getOrElse "",
+        ImprovedEulerMethodForTask(xs, iy) flatMap { _.le.maximumOption(AbsoluteBigDecimalOrder) map { _.toString } } getOrElse "",
+        RungeKuttaMethodForTask(xs, iy) flatMap { _.le.maximumOption(AbsoluteBigDecimalOrder) map { _.toString } } getOrElse "",
+      )
+    } unzip3
+
+    List(
+      Scatter(
+        values = ns,
+        secondValues = eys,
+        name = "Euler method",
+        mode = ScatterMode(ScatterMode.Lines, ScatterMode.Markers),
+        line = Line(
+          shape = LineShape.Spline,
+          color = PlottableEulerMethodForTask.plotColor,
+          dash = Dash.Solid,
+          width = 3.0,
+        ),
+        hoverinfo = HoverInfo(
+          HoverInfo.Name,
+          HoverInfo.X,
+          HoverInfo.Y,
+        ),
+        hoveron = HoverOn.Points,
+        connectgaps = false
+      ),
+
+      Scatter(
+        values = ns,
+        secondValues = ieys,
+        name = "Improved Euler method",
+        mode = ScatterMode(ScatterMode.Lines, ScatterMode.Markers),
+        line = Line(
+          shape = LineShape.Spline,
+          color = PlottableImprovedEulerMethodForTask.plotColor,
+          dash = Dash.Solid,
+          width = 3.0,
+        ),
+        hoverinfo = HoverInfo(
+          HoverInfo.Name,
+          HoverInfo.X,
+          HoverInfo.Y,
+        ),
+        hoveron = HoverOn.Points,
+        connectgaps = false
+      ),
+
+      Scatter(
+        values = ns,
+        secondValues = rkys,
+        name = "Runge-Kutta method",
+        mode = ScatterMode(ScatterMode.Lines, ScatterMode.Markers),
+        line = Line(
+          shape = LineShape.Spline,
+          color = PlottableRungeKuttaMethodForTask.plotColor,
+          dash = Dash.Solid,
+          width = 3.0,
+        ),
+        hoverinfo = HoverInfo(
+          HoverInfo.Name,
+          HoverInfo.X,
+          HoverInfo.Y,
+        ),
+        hoveron = HoverOn.Points,
+        connectgaps = false
+      )
     )
-
-    val result: List[DataForSolutionErrorPlot] =
-      (PlottableEulerMethodForTask.plotData(xs, iy) map { List(_) } getOrElse Nil) :::
-      (PlottableImprovedEulerMethodForTask.plotData(xs, iy) map { List(_) } getOrElse Nil) :::
-      (PlottableRungeKuttaMethodForTask.plotData(xs, iy) map { List(_) } getOrElse Nil) :::
-      (PlottableExactSolution.plotData(xs, iy) map { List(_) } getOrElse Nil) :::
-      Nil
-
-    result
   }
 
   private def redrawSolution(data: List[Scatter]): Unit = {
@@ -243,13 +322,13 @@ object Plotting {
   }
 
   // TODO: depend on data to draw
-  private def redrawMaxLocalError(): Unit = {
+  def redrawMaxLocalError(data: List[Scatter]): Unit = {
     purgeMaxLocalError()
+    plotMaxLocalError(data)
   }
 
-  def redrawPlots(data: List[DataForSolutionErrorPlot]): Unit = {
-    redrawSolution(data map { _.solutionPlot })
-    redrawLocalError(data map { _.errorPlot })
-    //    redrawMaxLocalError()
+  def redrawSolutionErrorPlots(solutionErrorData: List[DataForSolutionErrorPlot], maxErrorData: List[Scatter]): Unit = {
+    redrawSolution(solutionErrorData map { _.solutionPlot })
+    redrawLocalError(solutionErrorData map { _.errorPlot })
   }
 }
