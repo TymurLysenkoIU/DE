@@ -235,17 +235,19 @@ object Plotting {
     val ns = Range.Int.inclusive(in, fn, 1)
 
     val (eys, ieys, rkys) = ns map { n =>
-      val xs = Range.BigDecimal.inclusive(
-        ix,
-        fx,
-        calculateStep(ix, fx, n)
-      )
+      calculateStep(ix, fx, n) map { s =>
+        val xs = Range.BigDecimal.inclusive(
+          ix,
+          fx,
+          s
+        )
 
-      (
-        EulerMethodForTask(xs, iy) flatMap { _.le.maximumOption(AbsoluteBigDecimalOrder) map { _.toString } } getOrElse "",
-        ImprovedEulerMethodForTask(xs, iy) flatMap { _.le.maximumOption(AbsoluteBigDecimalOrder) map { _.toString } } getOrElse "",
-        RungeKuttaMethodForTask(xs, iy) flatMap { _.le.maximumOption(AbsoluteBigDecimalOrder) map { _.toString } } getOrElse "",
-      )
+        (
+          EulerMethodForTask(xs, iy) flatMap { _.le.maximumOption(AbsoluteBigDecimalOrder) map { _.toString } } getOrElse "",
+          ImprovedEulerMethodForTask(xs, iy) flatMap { _.le.maximumOption(AbsoluteBigDecimalOrder) map { _.toString } } getOrElse "",
+          RungeKuttaMethodForTask(xs, iy) flatMap { _.le.maximumOption(AbsoluteBigDecimalOrder) map { _.toString } } getOrElse "",
+        )
+      } getOrElse ("", "", "")
     } unzip3
 
     List(
@@ -321,14 +323,13 @@ object Plotting {
     plotLocalError(data)
   }
 
-  // TODO: depend on data to draw
-  def redrawMaxLocalError(data: List[Scatter]): Unit = {
-    purgeMaxLocalError()
-    plotMaxLocalError(data)
-  }
-
   def redrawSolutionErrorPlots(solutionErrorData: List[DataForSolutionErrorPlot], maxErrorData: List[Scatter]): Unit = {
     redrawSolution(solutionErrorData map { _.solutionPlot })
     redrawLocalError(solutionErrorData map { _.errorPlot })
+  }
+
+  def redrawMaxLocalError(data: List[Scatter]): Unit = {
+    purgeMaxLocalError()
+    plotMaxLocalError(data)
   }
 }

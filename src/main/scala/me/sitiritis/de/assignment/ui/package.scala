@@ -4,7 +4,6 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import org.scalajs.dom.html.Element
 
-// TODO: Validation
 package object ui {
   @dom def ivpInputForm(
     initialX: Var[Double],
@@ -25,7 +24,13 @@ package object ui {
       </p>
       <p>
         Number of intervals { Inputs.intInlineInput(numberOfIntervals, "numberOfIntervalsInput").bind }
-        (step = { de_numerical_methods.calculateStep(initialX.bind, finalX.bind, numberOfIntervals.bind).toString })
+        (step = {
+          de_numerical_methods.calculateStep(
+            initialX.bind,
+            finalX.bind,
+            numberOfIntervals.bind
+          ) map { _.toString } getOrElse "number of intervals must be > 0"
+        })
       </p>
     </div>
   }
@@ -42,6 +47,9 @@ package object ui {
         to
         { Inputs.intInlineInput(endErrorInterval, "endErrorInterval").bind }
       </p>
+      <div>
+        { Buttons.redrawMaxLocalErrorButton().bind }
+      </div>
     </div>
   }
 

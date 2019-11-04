@@ -21,27 +21,26 @@ object Main {
         ui.mainContainer(initialX, finalX, initialY, numberOfIntervals, beginErrorInterval, endErrorInterval)
       )
 
-      Binding {
-        val xs = Range.BigDecimal.inclusive(
-          initialX.bind,
-          finalX.bind,
-          calculateStep(initialX.bind, finalX.bind, numberOfIntervals.bind)
-        )
+      val xs = Binding { calculateStep(initialX.bind, finalX.bind, numberOfIntervals.bind) map { s =>
+          Range.BigDecimal.inclusive(initialX.value, finalX.value, s)
+        } getOrElse Range.BigDecimal.inclusive(1.0, 0.0, 1.0) // empty range
+      }
+      xs.watch()
 
-        ui.Plotting.redrawSolutionErrorPlots(ui.Plotting.getSolutionErrorDataForPlots(xs, initialY.bind), Nil)
+      // Redraw plot every time IVP changes
+      Binding {
+        ui.Plotting.redrawSolutionErrorPlots(ui.Plotting.getSolutionErrorDataForPlots(xs.bind, initialY.bind), Nil)
       }.watch()
 
-      Binding {
-        ui.Plotting.redrawMaxLocalError(
-          ui.Plotting.getMaxLocalErrorDataForPlot(
-            initialX.bind,
-            finalX.bind,
-            initialY.bind,
-            beginErrorInterval.bind,
-            endErrorInterval.bind
-          )
+      ui.Plotting.redrawMaxLocalError(
+        ui.Plotting.getMaxLocalErrorDataForPlot(
+          initialX.value,
+          finalX.value,
+          initialY.value,
+          beginErrorInterval.value,
+          endErrorInterval.value
         )
-      }.watch()
+      )
     })
   }
 }

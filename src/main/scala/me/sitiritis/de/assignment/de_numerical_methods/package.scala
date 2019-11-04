@@ -100,7 +100,8 @@ package object de_numerical_methods {
   class RungeKuttaMethodForTask extends RungeKuttaMethod(deFunction, exactSolutionFunction, exactSolutionConstant)
   object RungeKuttaMethodForTask extends RungeKuttaMethodForTask
 
-  def calculateStep(ix: BigDecimal, fx: BigDecimal, n: Int): BigDecimal = (fx - ix) / n
+  def calculateStep(ix: BigDecimal, fx: BigDecimal, n: Int): Option[BigDecimal] =
+    if (n > 0) Some((fx - ix) / n) else None
 
   def deFunction(x: BigDecimal, y: BigDecimal): Option[BigDecimal] = Some(5 - x.pow(2) - y.pow(2) + 2 * x * y)
 

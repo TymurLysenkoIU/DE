@@ -95,3 +95,7 @@ header {
   text-align: center;
   width: 100%
 }
+
+input.inputError {
+  border: 2px solid red
+}

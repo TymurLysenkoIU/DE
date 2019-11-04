@@ -11,7 +11,9 @@ object Inputs {
     (contentLen + 1) * 8
   }
 
-  // TODO: input validation of characters
+  private val doubleRegex = """(-?\d+(\.\d+)?)""".r
+  private val intRegex = """(-?\d+)""".r
+
   @dom def doubleInlineInput(rv: Var[Double], inputID: String): Binding[Element] = {
     <input
       id={ inputID } type="text"
@@ -21,7 +23,15 @@ object Inputs {
         self.width(calculateInputWidth(self.value.asInstanceOf[String].length))
       }
       onchange={ _: Event =>
-        rv.value = jQ(s"#$inputID").value.asInstanceOf[String].toDouble
+        val thisElement = jQ(s"#$inputID")
+
+        thisElement.value.asInstanceOf[String] match {
+          case doubleRegex(s, _*) => {
+            thisElement.removeClass("inputError")
+            rv.value = s.toDouble
+          }
+          case _ => thisElement.addClass("inputError")
+        }
       }
     />
   }
@@ -35,7 +45,15 @@ object Inputs {
         self.width(calculateInputWidth(self.value.asInstanceOf[String].length))
       }
       onchange={ _: Event =>
-        rv.value = jQ(s"#$inputID").value.asInstanceOf[String].toInt
+        val thisElement = jQ(s"#$inputID")
+
+        thisElement.value.asInstanceOf[String] match {
+          case intRegex(s) => {
+            thisElement.removeClass("inputError")
+            rv.value = s.toInt
+          }
+          case _ => thisElement.addClass("inputError")
+        }
       }
     />
   }
