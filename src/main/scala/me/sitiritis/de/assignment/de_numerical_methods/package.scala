@@ -26,7 +26,7 @@ package object de_numerical_methods {
               fp <- f(x, p._1.head)
             } yield {
               val curY = p._1.head + (fp * r.step)
-              val curLocalError = curY - exc
+              val curLocalError = (curY - exc).abs
               (curY :: p._1, curLocalError :: p._2)
             }
         } map { res => DENumericalSolution(r, res._1.reverse, res._2.reverse) }
@@ -56,7 +56,7 @@ package object de_numerical_methods {
               k2 <- f(x + r.step, p._1.head + (r.step * k1))
             } yield {
               val curY = p._1.head + (r.step / 2.0) * (k1 + k2)
-              val curLocalError = curY - exc
+              val curLocalError = (curY - exc).abs
               (curY :: p._1, curLocalError :: p._2)
             }
         } map { res => DENumericalSolution(r, res._1.reverse, res._2.reverse) }
@@ -88,7 +88,7 @@ package object de_numerical_methods {
               k4 <- f(x + r.step, p._1.head + (r.step * k3))
             } yield {
               val curY = p._1.head + ((r.step / 6.0) * (k1 + (2.0 * k2) + (2.0 * k3) + k4))
-              val curLocalError = curY - exc
+              val curLocalError = (curY - exc).abs
               (curY :: p._1, curLocalError :: p._2)
             }
         } map { res => DENumericalSolution(r, res._1.reverse, res._2.reverse) }

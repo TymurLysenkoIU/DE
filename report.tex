@@ -1,0 +1,189 @@
+\documentclass[12pt,a4paper,titlepage,twoside]{article}
+
+\usepackage[raggedright]{titlesec}
+\usepackage[makeroom]{cancel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{pdflscape}
+
+\title{Differential Equations Computational Practicum Report - Variant 12}
+\author{Tymur Lysenko}
+\date{November, 2019}
+
+\begin{document}
+  \pagenumbering{gobble}
+  \maketitle
+  \tableofcontents
+  \newpage
+  \pagenumbering{arabic}
+
+  \section{Solution to the provided differential equation}
+
+  Solve the following initial value problem analytically:
+  \begin{equation} \label{task_ivp}
+    \begin{cases}
+      y' = 5 - x^2 - y^2 + 2xy\\
+      y(0) = 1 = y(x_0) = y_0
+    \end{cases}
+  \end{equation}
+  The differential equation from the IVP above is a \textbf{Riccati} equation:
+  \begin{enumerate}
+    \item Find its any non-trivial particular solution $y_1$. Suppose the particular solution is of the form: 
+    \begin{equation} \label{par_sol_prop}
+      y_1 = c_1 + c_2 x
+    \end{equation}
+    then
+    \begin{equation} \label{par_sol_prop_der}
+      y_1' = c_2
+    \end{equation}
+    Substituting \eqref{par_sol_prop} and \eqref{par_sol_prop_der} into the \eqref{task_ivp} and rearranging the terms yields:
+    \begin{equation*}
+      c_2 + c_1^2 + 2c_1c_2x + c_2^2 x^2 - 2c_1x - 2c_2 x^2 = 5 - x^2
+    \end{equation*}
+    Grouping of terms with the corresponding coefficients produces:
+    \begin{equation*}
+      (c_2^2 - 2c_2)x^2 + 2c_1(c_2 - 1)x + c_1^2 + c_2 = 5 - x^2
+    \end{equation*}
+    To find $c_1$ and $c_2$ solve the below system of equations follows from the above equation:
+    \begin{equation*}
+      \begin{cases}
+        c_2^2 - 2c_2 = -1\\
+        c_2 - 1 = 0\\
+        c_1^2 + c_2 = 5
+      \end{cases}
+      \iff
+      \begin{cases}
+        c_2 = 1\\
+        c_1^2 + 1 = 5\\
+        1 - 2 = -1
+      \end{cases}
+      \iff
+      \begin{cases}
+        c_1 = \pm 2\\
+        c_2 = 1\\
+        -1 = -1
+      \end{cases}
+    \end{equation*}
+    Since only 1 solution is enough, let the particular solution of \eqref{task_ivp} be:
+    \begin{equation} \label{par_sol}
+      y_1 = 2 + x
+    \end{equation}
+
+    \item The solution to the Riccati equation has a form:
+    \begin{equation} \label{gen_form_sol}
+      y = y_1 + u(x) = 2 + x + u, \text{where $u$ is a function of $x$}
+    \end{equation}
+    So:
+    \begin{equation} \label{gen_form_sol_der}
+      y' = 1 + u'
+    \end{equation}
+    \begin{align}
+      y^2 &= (2 + x + u)^2 \nonumber \\
+      &= 4 + 2x + 2u + 2x + x^2 + ux + 2u + ux + u^2 \nonumber \\
+      &= u^2 + 4u + x^2 + 4x + 2ux + 4 \label{gen_form_sol_sq}
+    \end{align}
+    Substitute \eqref{gen_form_sol}, \eqref{gen_form_sol_der} and \eqref{gen_form_sol_sq} to the \eqref{task_ivp}:
+    \begin{equation*}
+      \cancel{1} + u' = \cancel{5} - \cancel{x^2} - u^2 - 4u - \cancel{x^2} - \cancel{4x} - \cancel{2ux} - \cancel{4} + \cancel{4x} + \cancel{2x^2} + \cancel{2xu}
+    \end{equation*}
+
+    The above equation is a \textbf{Bernoulli} equation, which needs to be solved with respect to $u$:
+    \begin{equation} \label{bernoulli}
+      u' + 4u = -u^2
+    \end{equation}
+    \begin{enumerate}
+      \item Solve the complementary equation to the \eqref{bernoulli}:
+      \begin{gather*}
+        u'_c = -4u_c\\
+        \int \frac{du_c}{u_c} = -4 \int dx, u_c \neq 0\\
+        ln|u_c| = -4x + c_3\\
+        u_c = c_4e^{-4x}
+      \end{gather*}
+      Since it is enough to have any solution to the complementary equation to solve the \eqref{bernoulli}, for simplicity take $c_4 = 1$, so:
+      \begin{equation} \label{bernoulli_comp_sol}
+        u_c = e^{-4x}
+      \end{equation}
+
+      \item Use \eqref{bernoulli_comp_sol} to find $u$ by variating the parameter $v$:
+      \begin{equation} \label{u}
+        u = u_cv = \frac{v}{e^{4x}} \text{, where $v$ is a function of $x$}
+      \end{equation}
+      \begin{equation} \label{u'}
+        u' = \frac{e^{4x}v' - 4e^{4x}v}{e^{8x}}
+      \end{equation}
+      \begin{equation} \label{u_sq}
+        u^2 = \frac{v^2}{e^{8x}}
+      \end{equation}
+      Substitute \eqref{u}, \eqref{u'} and \eqref{u_sq} into the \eqref{bernoulli} to find $v$:
+      \begin{equation*}
+        \frac{e^{4x}v' - 4e^{4x}v}{e^{8x}} + 4\frac{v}{e^{4x}} = -\frac{v^2}{e^{8x}}
+      \end{equation*}
+      Multiply both sides by $e^{8x}$:
+      \begin{gather*}
+        e^{4x}v' - \cancel{4e^{4x}v} + \cancel{4e^{4x}v} = v^2\\
+        v' = -\frac{v^2}{e^{4x}}
+      \end{gather*}
+      Solve the above \textbf{separable} differential equation with respect to $v$:
+      \begin{gather}
+        \int \frac{dv}{v^2} = - \int e^{-4x} dx \nonumber \\
+        - \frac{1}{v} = \frac{1}{4}e^{-4x} + c \nonumber \\
+        v = \frac{4}{c - e^{-4x}} \label{v}
+      \end{gather}
+      The \eqref{v} can now be substituted to \eqref{u}, which is the most general solution for \eqref{bernoulli}:
+      \begin{equation} \label{bernoulli_sol}
+        u = \frac{4}{ce^{4x} - 1}
+      \end{equation}
+    \end{enumerate}
+
+    Now it is possible to get back to \eqref{gen_form_sol} and write \textbf{the most general solution for the differential equation from the IVP \eqref{task_ivp}}, by substituting $u$ with \eqref{bernoulli_sol}:
+    \begin{equation} \label{ivp_de_sol}
+      y = 2 + x + \frac{4}{ce^{4x} - 1}
+    \end{equation}
+
+    The \eqref{ivp_de_sol} is \textit{undefined}, when:
+    \begin{gather*}
+      ce^{4x} = 1 \\
+      e^{4x} = \frac{1}{c}
+    \end{gather*}
+    \begin{equation} \label{undefined_point}
+      x = \frac{ln(\frac{1}{c})}{4}
+    \end{equation}
+
+    \item To finish solving the initial value problem \eqref{task_ivp} express the general formula for $c$ in terms of the initial condition $y_0$ and $x_0$ and the substitute the given corresponding values:
+    \begin{gather*}
+      y_0 - 2 - x_0 = \frac{4}{ce^{4x_0} - 1} \\
+      ce^{4x_0} - 1 = \frac{4}{y_0 - 2 - x_0}
+    \end{gather*}
+    \begin{equation} \label{gen_c}
+      c = \frac{2 + y_0 - x_0}{e^{4x_0}(y_0 - x_0 - 2)}
+    \end{equation}
+    \begin{equation} \label{c}
+      c = \frac{2 + 1 - 0}{e^{4*0}(1 - 0 - 2)} = \frac{3}{1*(-1)} = -3
+    \end{equation}
+    From \eqref{gen_c} it follows that the IVP \eqref{task_ivp} is not solvable, when the initial condition satisfies the equation:
+    \begin{equation}
+      y_0 = x_0 + 2
+    \end{equation}
+
+    So, \textbf{the solution to the IVP \eqref{task_ivp}} is:
+    \begin{equation} \label{ivp_sol}
+      y = 2 + x - \frac{4}{3e^{4x} + 1}
+    \end{equation}
+    Because of the \eqref{undefined_point} and \eqref{c} the solution \eqref{ivp_sol} is defined $\forall x \in \mathbb{R}$.
+  \end{enumerate}
+
+
+  \newpage
+  \section{UML Diagram}
+
+
+
+
+  \newpage
+  \section{Interesting parts of the code}
+
+  \newpage
+  \section{Application demonstration}
+
+\end{document}

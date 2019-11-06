@@ -1,3 +1,5 @@
 .idea
+.metals
+latex-artifacts/
 target/
 node_modules/

@@ -8,6 +8,7 @@ import plotly.{Plotly, Scatter, Trace}
 import scala.collection.immutable.NumericRange
 import cats.implicits._
 import me.sitiritis.de.assignment.ui.Plotting.PlottableEulerMethodForTask.plotColor
+import plotly.layout.Layout
 
 import scala.language.postfixOps
 
@@ -211,12 +212,11 @@ object Plotting {
   val solutionDivID = "solutionPlot"
   val localErrorDivID = "localErrorPlot"
   val maxLocalErrorDivID = "maxLocalErrorPlot"
-  def plotSolution(data: Seq[Trace]): Unit = Plotly.plot(solutionDivID, data)
-  def plotSolution(data: Trace): Unit = Plotly.plot(solutionDivID, data)
+  def plotSolution(data: Seq[Trace]): Unit = Plotly.plot(solutionDivID, data, Layout(title = "Solution plot"))
   def purgeSolution(): Unit = plotly_ext.Plotly.purge(solutionDivID)
-  def plotLocalError(data: Seq[Trace]): Unit = Plotly.plot(localErrorDivID, data)
+  def plotLocalError(data: Seq[Trace]): Unit = Plotly.plot(localErrorDivID, data, Layout(title = "Local error plot"))
   def purgeLocalError(): Unit = plotly_ext.Plotly.purge(localErrorDivID)
-  def plotMaxLocalError(data: Seq[Trace]): Unit = Plotly.plot(maxLocalErrorDivID, data)
+  def plotMaxLocalError(data: Seq[Trace]): Unit = Plotly.plot(maxLocalErrorDivID, data, Layout(title = "Maximal local error plot"))
   def purgeMaxLocalError(): Unit = plotly_ext.Plotly.purge(maxLocalErrorDivID)
 
   def getSolutionErrorDataForPlots(xs: NumericRange.Inclusive[BigDecimal], iy:Double): List[DataForSolutionErrorPlot] = {
@@ -228,10 +228,6 @@ object Plotting {
   }
 
   def getMaxLocalErrorDataForPlot(ix: Double, fx: Double, iy:Double, in: Int, fn: Int): List[Scatter] = {
-    implicit object AbsoluteBigDecimalOrder extends cats.kernel.Order[BigDecimal] {
-      override def compare(x: BigDecimal, y: BigDecimal): Int = x.abs.compareTo(y.abs)
-    }
-
     val ns = Range.Int.inclusive(in, fn, 1)
 
     val (eys, ieys, rkys) = ns map { n =>
@@ -243,9 +239,9 @@ object Plotting {
         )
 
         (
-          EulerMethodForTask(xs, iy) flatMap { _.le.maximumOption(AbsoluteBigDecimalOrder) map { _.toString } } getOrElse "",
-          ImprovedEulerMethodForTask(xs, iy) flatMap { _.le.maximumOption(AbsoluteBigDecimalOrder) map { _.toString } } getOrElse "",
-          RungeKuttaMethodForTask(xs, iy) flatMap { _.le.maximumOption(AbsoluteBigDecimalOrder) map { _.toString } } getOrElse "",
+          EulerMethodForTask(xs, iy) flatMap { _.le.maximumOption map { _.toString } } getOrElse "",
+          ImprovedEulerMethodForTask(xs, iy) flatMap { _.le.maximumOption map { _.toString } } getOrElse "",
+          RungeKuttaMethodForTask(xs, iy) flatMap { _.le.maximumOption map { _.toString } } getOrElse "",
         )
       } getOrElse ("", "", "")
     } unzip3
