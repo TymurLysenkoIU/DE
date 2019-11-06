@@ -74,7 +74,7 @@ package object de_numerical_methods {
     c: (BigDecimal, BigDecimal) => Option[BigDecimal]
   ) extends DENumericalMethod {
     override def solve(xs: NumericRange.Inclusive[BigDecimal], initialY: BigDecimal): Option[DENumericalSolution] = {
-      def improvedEulerMethodForValidData(r: NumericRange.Inclusive[BigDecimal], iy: BigDecimal) = {
+      def rungeKuttaMethodForValidData(r: NumericRange.Inclusive[BigDecimal], iy: BigDecimal) = {
         r.take(r.size - 1).foldLeft[Option[(List[BigDecimal], List[BigDecimal])]](Some((List(initialY), List(0.0)))) {
           (prev, x) =>
             val nextX = x + r.step
@@ -93,7 +93,7 @@ package object de_numerical_methods {
             }
         } map { res => DENumericalSolution(r, res._1.reverse, res._2.reverse) }
       }
-      Some(improvedEulerMethodForValidData(_, _)) filter { _ => xs.step < 1.0 } flatMap { _(xs, initialY) }
+      Some(rungeKuttaMethodForValidData(_, _)) filter { _ => xs.step < 1.0 } flatMap { _(xs, initialY) }
     }
   }
 
